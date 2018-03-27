@@ -21,8 +21,9 @@
 
 
 [[constraint]]
-  branch = "master"
+  branch = "use-in-bundle-lib-update"
   name = "github.com/automationbroker/broker-client-go"
+  source = "https://github.com/shawn-hurley/broker-client-go.git"
 
 [[constraint]]
   name = "github.com/coreos/etcd"

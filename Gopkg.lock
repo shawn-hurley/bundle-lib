@@ -20,7 +20,7 @@
   revision = "de5bf2ad457846296e2031421a34e2568e304e35"
 
 [[projects]]
-  branch = "master"
+  branch = "use-in-bundle-lib-update"
   name = "github.com/automationbroker/broker-client-go"
   packages = [
     "client/clientset/versioned",
@@ -29,7 +29,8 @@
     "pkg/apis/automationbroker.io",
     "pkg/apis/automationbroker.io/v1"
   ]
-  revision = "417a1c5029bb8be34758b0e41a6a785f78890c7f"
+  revision = "526651a486e66e9efc900ac751ea46fad0141b56"
+  source = "https://github.com/shawn-hurley/broker-client-go.git"
 
 [[projects]]
   name = "github.com/coreos/etcd"
@@ -451,7 +452,6 @@
   revision = "5343f14b1d39e19add5eb0245eca715d8b37b164"
 
 [[projects]]
-  branch = "release-6.0"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
@@ -536,7 +536,8 @@
     "util/homedir",
     "util/integer"
   ]
-  revision = "9389c055a838d4f208b699b3c7c51b70f2368861"
+  revision = "78700dec6369ba22221b72770783300f143df150"
+  version = "v6.0.0"
 
 [[projects]]
   branch = "master"
