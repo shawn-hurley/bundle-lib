@@ -124,8 +124,9 @@ func (s *Spec) GetPlanFromID(id string) (Plan, bool) {
 
 // Context - Determines the context in which the service is running
 type Context struct {
-	Platform  string `json:"platform"`
-	Namespace string `json:"namespace"`
+	Platform     string `json:"platform"`
+	Namespace    string `json:"namespace"`
+	NotSandboxed bool   `json:"notSandboxed"`
 }
 
 // ExtractedCredentials - Credentials that are extracted from the pods
