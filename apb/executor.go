@@ -139,6 +139,23 @@ func (e *executor) updateDescription(newDescription string) {
 	e.statusChan <- status
 }
 
+func (e *executor) createTransientNamespace(
+	specName string, action string,
+	k8scli *clients.KubernetesClient) (v1.Namespace, error) {
+	// Create namespace.
+	namespace := v1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels:       labels,
+			GenerateName: fmt.Sprintf("%s-%.4s-", specName, action),
+		},
+	}
+	ns, err := k8scli.Client.CoreV1().Namespaces().Create(&namespace)
+	if err != nil {
+		return nil, err
+	}
+	return ns, nil
+}
+
 // executeApb - Runs an APB Action with a provided set of inputs
 func (e *executor) executeApb(
 	action string, spec *Spec, context *Context, p *Parameters,
@@ -189,23 +206,22 @@ func (e *executor) executeApb(
 	e.podName = executionContext.PodName
 
 	executionContext.Targets = append(executionContext.Targets, context.Namespace)
-	// Create namespace.
-	namespace := v1.Namespace{
-		ObjectMeta: metav1.ObjectMeta{
-			Labels:       labels,
-			GenerateName: fmt.Sprintf("%s-%.4s-", spec.FQName, action),
-		},
-	}
-	ns, err := k8scli.Client.CoreV1().Namespaces().Create(&namespace)
-	if err != nil {
-		return executionContext, err
-	}
-	//Sandbox (i.e Namespace) was created.
-	executionContext.Namespace = ns.ObjectMeta.Name
-	err = copySecretsToNamespace(executionContext, clusterConfig, k8scli, secrets)
-	if err != nil {
-		log.Errorf("unable to copy secrets: %v to  new namespace", secrets)
-		return executionContext, err
+	if !context.NotSandboxed {
+		ns, err = createTransientNamespace(k8scli, spec.FQName, action)
+		if err != nil {
+			log.Error(err.Error())
+			return executionContext, err
+		}
+		//Sandbox (i.e Namespace) was created.
+		executionContext.Namespace = ns.ObjectMeta.Name
+
+		err = copySecretsToNamespace(executionContext, clusterConfig, k8scli, secrets)
+		if err != nil {
+			log.Errorf("unable to copy secrets: %v to  new namespace", secrets)
+			return executionContext, err
+		}
+	} else {
+		executionContext.Namespace = context.Namespace
 	}
 
 	executionContext.ServiceAccount, err = runtime.Provider.CreateSandbox(executionContext.PodName, executionContext.Namespace, executionContext.Targets, clusterConfig.SandboxRole)
