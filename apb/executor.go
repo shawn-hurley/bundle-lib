@@ -141,7 +141,8 @@ func (e *executor) updateDescription(newDescription string) {
 
 func (e *executor) createTransientNamespace(
 	specName string, action string,
-	k8scli *clients.KubernetesClient) (v1.Namespace, error) {
+	k8scli *clients.KubernetesClient,
+	labels map[string]string) (v1.Namespace, error) {
 	// Create namespace.
 	namespace := v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
@@ -151,9 +152,9 @@ func (e *executor) createTransientNamespace(
 	}
 	ns, err := k8scli.Client.CoreV1().Namespaces().Create(&namespace)
 	if err != nil {
-		return nil, err
+		return namespace, err
 	}
-	return ns, nil
+	return *ns, nil
 }
 
 // executeApb - Runs an APB Action with a provided set of inputs
