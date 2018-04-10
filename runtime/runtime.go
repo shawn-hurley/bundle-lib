@@ -230,9 +230,11 @@ func (p provider) CreateSandbox(podName string,
 	}
 
 	for _, target := range targets {
-		err = k8scli.CreateRoleBinding(podName, subjects, namespace, target, roleRef)
-		if err != nil {
-			return "", err
+		if target != namespace {
+			err = k8scli.CreateRoleBinding(podName, subjects, namespace, target, roleRef)
+			if err != nil {
+				return "", err
+			}
 		}
 	}
 

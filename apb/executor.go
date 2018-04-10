@@ -207,7 +207,7 @@ func (e *executor) executeApb(
 
 	executionContext.Targets = append(executionContext.Targets, context.Namespace)
 	if !context.NotSandboxed {
-		ns, err = createTransientNamespace(k8scli, spec.FQName, action)
+		ns, err := e.createTransientNamespace(spec.FQName, action, k8scli, labels)
 		if err != nil {
 			log.Error(err.Error())
 			return executionContext, err
