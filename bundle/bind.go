@@ -70,7 +70,7 @@ func (e *executor) Bind(
 			}
 		}
 
-		creds, err := ExtractCredentials(
+		creds, err := extractCredentials(
 			executionContext.PodName,
 			executionContext.Namespace,
 			instance.Spec.Runtime,

@@ -90,7 +90,7 @@ func (e *executor) provisionOrUpdate(method executionMethod, instance *ServiceIn
 		return nil
 	}
 
-	creds, err := ExtractCredentials(
+	creds, err := extractCredentials(
 		executionContext.PodName,
 		executionContext.Namespace,
 		instance.Spec.Runtime,

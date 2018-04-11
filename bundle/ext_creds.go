@@ -49,9 +49,9 @@ var (
 
 type extractCreds func(string, string) (*ExtractedCredentials, error)
 
-// ExtractCredentials - Extract credentials from pod in a certain namespace.
+// extractCredentials - Extract credentials from pod in a certain namespace.
 // needs the podname, namespace and the runtime version.
-func ExtractCredentials(podname string, ns string, runtime int) (*ExtractedCredentials, error) {
+func extractCredentials(podname string, ns string, runtime int) (*ExtractedCredentials, error) {
 	extractCredsFunc, err := getExtractCreds(runtime)
 	if err != nil {
 		return nil, err
@@ -59,8 +59,8 @@ func ExtractCredentials(podname string, ns string, runtime int) (*ExtractedCrede
 	return extractCredsFunc(podname, ns)
 }
 
-// ExtractCredentialsAsFile - Extract credentials from running APB using exec
-func ExtractCredentialsAsFile(podname string, namespace string) (*ExtractedCredentials, error) {
+// extractCredentialsAsFile - Extract credentials from running APB using exec
+func extractCredentialsAsFile(podname string, namespace string) (*ExtractedCredentials, error) {
 	k8scli, err := clients.Kubernetes()
 	if err != nil {
 		log.Errorf("error creating k8s client: %v", err)
@@ -143,8 +143,8 @@ func ExtractCredentialsAsFile(podname string, namespace string) (*ExtractedCrede
 	return nil, fmt.Errorf("[%s] ExecTimeout: Failed to gather bind credentials after %d retries", podname, apbWatchRetries)
 }
 
-// ExtractCredentialsAsSecret - Extract credentials from APB as secret in namespace.
-func ExtractCredentialsAsSecret(podname string, namespace string) (*ExtractedCredentials, error) {
+// extractCredentialsAsSecret - Extract credentials from APB as secret in namespace.
+func extractCredentialsAsSecret(podname string, namespace string) (*ExtractedCredentials, error) {
 	k8s, err := clients.Kubernetes()
 	if err != nil {
 		return nil, fmt.Errorf("Unable to retrive kubernetes client - %v", err)
@@ -160,9 +160,9 @@ func ExtractCredentialsAsSecret(podname string, namespace string) (*ExtractedCre
 
 func getExtractCreds(runtimeVersion int) (extractCreds, error) {
 	if runtimeVersion == 1 {
-		return ExtractCredentialsAsFile, nil
+		return extractCredentialsAsFile, nil
 	} else if runtimeVersion >= 2 {
-		return ExtractCredentialsAsSecret, nil
+		return extractCredentialsAsSecret, nil
 	} else {
 		return nil, fmt.Errorf(
 			"Unexpected runtime version [%v], support %v <= runtimeVersion <= %v",
